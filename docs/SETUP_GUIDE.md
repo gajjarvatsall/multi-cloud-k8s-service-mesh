@@ -399,9 +399,71 @@ kubectl port-forward -n monitoring svc/prometheus-grafana 3000:80
 kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
 ```
 
-## Phase 8: Multi-Cluster Operations
+## Phase 8: Multi-Cluster Service Mesh Setup
 
-### 8.1 Switch Between Clusters
+### 8.1 Setup Cross-Cloud Service Discovery
+
+```bash
+# Apply cluster configurations for multi-cloud mesh
+kubectl config use-context aws-eks
+kubectl apply -f kubernetes/multi-cloud/cluster-config.yaml
+
+kubectl config use-context azure-aks
+kubectl apply -f kubernetes/multi-cloud/cluster-config.yaml
+
+kubectl config use-context gcp-gke
+kubectl apply -f kubernetes/multi-cloud/cluster-config.yaml
+```
+
+### 8.2 Deploy East-West Gateways
+
+```bash
+# Deploy east-west gateways for inter-cluster communication
+for context in aws-eks azure-aks gcp-gke; do
+  echo "Setting up east-west gateway on $context"
+  kubectl config use-context $context
+  kubectl apply -f kubernetes/multi-cloud/east-west-gateway.yaml
+
+  # Wait for gateway to be ready
+  kubectl wait --for=condition=available --timeout=300s deployment/istio-eastwestgateway -n istio-system
+done
+```
+
+### 8.3 Configure Cross-Cloud Service Discovery
+
+```bash
+# Apply cluster secrets for service discovery (update discovery addresses first)
+kubectl config use-context aws-eks
+kubectl apply -f kubernetes/multi-cloud/cluster-secrets.yaml
+```
+
+### 8.4 Deploy Cloud-Specific Services
+
+```bash
+# Deploy productpage to Azure
+kubectl config use-context azure-aks
+kubectl apply -f kubernetes/multi-cloud/productpage-azure.yaml
+kubectl apply -f kubernetes/multi-cloud/cross-cloud-gateway.yaml
+
+# Deploy ratings service to GCP
+kubectl config use-context gcp-gke
+kubectl apply -f kubernetes/multi-cloud/ratings-gcp.yaml
+
+# Verify cross-cloud connectivity
+kubectl config use-context aws-eks
+kubectl get pods -n apps
+kubectl exec -n apps deployment/productpage-v1 -- curl -s ratings:9080/ratings/0
+```
+
+### 8.5 Automated Multi-Cloud Deployment
+
+```bash
+# Use the automated deployment script
+chmod +x scripts/deploy-to-all-clouds.sh
+./scripts/deploy-to-all-clouds.sh
+```
+
+### 8.6 Switch Between Clusters
 
 ```bash
 # List all contexts
@@ -415,18 +477,6 @@ kubectl config use-context azure-aks
 
 # Switch to GCP cluster (if deployed)
 kubectl config use-context gcp-gke
-```
-
-### 8.2 Deploy Apps to Multiple Clusters
-
-```bash
-# Deploy to all clusters
-for context in aws-eks azure-aks; do
-  echo "Deploying to $context"
-  kubectl config use-context $context
-  kubectl apply -f kubernetes/sample-apps/
-  kubectl apply -f kubernetes/security/
-done
 ```
 
 ## Troubleshooting

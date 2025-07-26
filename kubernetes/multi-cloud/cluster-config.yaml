@@ -1,0 +1,47 @@
+# AWS Cluster Configuration
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: aws-cluster
+spec:
+  values:
+    global:
+      meshID: multi-cloud-mesh
+      multiCluster:
+        clusterName: aws-cluster
+      network: aws-network
+    pilot:
+      env:
+        EXTERNAL_ISTIOD: false
+---
+# Azure Cluster Configuration  
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: azure-cluster
+spec:
+  values:
+    global:
+      meshID: multi-cloud-mesh
+      multiCluster:
+        clusterName: azure-cluster
+      network: azure-network
+    pilot:
+      env:
+        EXTERNAL_ISTIOD: false
+---
+# GCP Cluster Configuration
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: gcp-cluster
+spec:
+  values:
+    global:
+      meshID: multi-cloud-mesh
+      multiCluster:
+        clusterName: gcp-cluster
+      network: gcp-network
+    pilot:
+      env:
+        EXTERNAL_ISTIOD: false

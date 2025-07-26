@@ -1,0 +1,58 @@
+# AWS cluster secret for Azure and GCP
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-remote-secret-azure-aks
+  namespace: istio-system
+  labels:
+    istio/cluster: azure-cluster
+  annotations:
+    networking.istio.io/cluster: azure-cluster
+type: Opaque
+stringData:
+  kubeconfig: |
+    apiVersion: v1
+    kind: Config
+    clusters:
+    - cluster:
+        server: https://AZURE_DISCOVERY_ADDRESS:15443
+        insecure-skip-tls-verify: true
+      name: azure-cluster
+    contexts:
+    - context:
+        cluster: azure-cluster
+        user: azure-cluster
+      name: azure-cluster
+    current-context: azure-cluster
+    users:
+    - name: azure-cluster
+      user: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-remote-secret-gcp-gke
+  namespace: istio-system
+  labels:
+    istio/cluster: gcp-cluster
+  annotations:
+    networking.istio.io/cluster: gcp-cluster
+type: Opaque
+stringData:
+  kubeconfig: |
+    apiVersion: v1
+    kind: Config
+    clusters:
+    - cluster:
+        server: https://GCP_DISCOVERY_ADDRESS:15443
+        insecure-skip-tls-verify: true
+      name: gcp-cluster
+    contexts:
+    - context:
+        cluster: gcp-cluster
+        user: gcp-cluster
+      name: gcp-cluster
+    current-context: gcp-cluster
+    users:
+    - name: gcp-cluster
+      user: {}

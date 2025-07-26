@@ -1,0 +1,46 @@
+# Gateway for Azure cluster
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookinfo-gateway-azure
+  namespace: apps
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+# VirtualService for cross-cloud routing
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo-cross-cloud
+  namespace: apps
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - bookinfo-gateway-azure
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        prefix: /static
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
+
