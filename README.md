@@ -18,29 +18,12 @@ A production-ready multi-cloud Kubernetes platform featuring unified service mes
 - **🔒 Zero-Trust Security**: mTLS encryption, authorization policies, and network segmentation
 - **📊 Comprehensive Monitoring**: Prometheus, Grafana, and Kiali observability stack
 - **🏗️ Infrastructure as Code**: Complete Terraform automation for all cloud providers
-- **🔄 GitOps Ready**: Structured for CI/CD integration and automated deployments
 
 ## 🏗️ Architecture
 
-```
-┌─────────────────┬─────────────────┬─────────────────┐
-│   AWS EKS       │   Azure AKS     │   Google GKE    │
-│                 │                 │                 │
-│ ┌─────────────┐ │ ┌─────────────┐ │ ┌─────────────┐ │
-│ │   Details   │ │ │ Productpage │ │ │   Ratings   │ │
-│ │   Reviews   │ │ │             │ │ │             │ │
-│ └─────────────┘ │ └─────────────┘ │ └─────────────┘ │
-│                 │                 │                 │
-└─────────────────┴─────────────────┴─────────────────┘
-         │                │                │
-         └────────────────┼────────────────┘
-                         │
-              ┌─────────────────┐
-              │  Istio Mesh     │
-              │  East-West      │
-              │  Gateways       │
-              └─────────────────┘
-```
+<img width="5307" height="3705" alt="Multi-Cloud Kubernetes Platform with Service Mesh" src="https://github.com/user-attachments/assets/c7550c0e-fca3-403f-bf11-554ecacb41d5" />
+
+
 
 ### 🛠️ Technology Stack
 
@@ -51,7 +34,6 @@ A production-ready multi-cloud Kubernetes platform featuring unified service mes
 | **Infrastructure** | Terraform            | Multi-cloud infrastructure automation       |
 | **Monitoring**     | Prometheus + Grafana | Metrics collection and visualization        |
 | **Security**       | Cert-Manager + Istio | Automated TLS certificates and mTLS         |
-| **CI/CD**          | GitOps + Helm        | Application deployment and management       |
 
 ## 🚀 Quick Start
 
@@ -80,7 +62,7 @@ For step-by-step instructions, see [SETUP_GUIDE.md](./SETUP_GUIDE.md)
 ## 📁 Project Structure
 
 ```
-├── terraform/                 # Infrastructure as Code
+├── terraform/                # Infrastructure as Code
 │   ├── aws/                  # AWS EKS cluster
 │   ├── azure/                # Azure AKS cluster
 │   └── gcp/                  # Google GKE cluster
